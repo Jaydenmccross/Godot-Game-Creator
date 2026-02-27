@@ -14,6 +14,7 @@ def write_project_file(project_dir: Path, spec: GameSpec) -> None:
         'LevelManager="*res://scripts/autoload/level_manager.gd"',
         'SpriteGenerator="*res://scripts/autoload/sprite_generator.gd"',
         'InputConfig="*res://scripts/autoload/input_config.gd"',
+        'ScreenEffects="*res://scripts/autoload/screen_effects.gd"',
     ]
     if spec.multiplayer != MultiplayerMode.NONE:
         autoloads.append('NetworkManager="*res://scripts/autoload/network_manager.gd"')
