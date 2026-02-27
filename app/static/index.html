@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Godot Game Creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-logo">G</div>
+    <div class="header-text">
+      <h1>Godot Game Creator</h1>
+      <p>AI-powered game studio — zero scripting required</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" id="newChat" title="New conversation">&#x21bb;</button>
+      <button class="btn-icon" id="togglePanel" title="Toggle panel">&#x2630;</button>
+    </div>
+  </header>
+
+  <!-- Progress bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Main -->
+  <div class="main-layout">
+
+    <!-- Chat panel -->
+    <section class="chat-panel">
+      <div class="chat-messages" id="chatMessages"></div>
+
+      <!-- Typing indicator -->
+      <div class="typing-indicator" id="typingIndicator">
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+        <span class="typing-text">Game Creator is thinking…</span>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="quick-actions">
+        <button class="quick-btn" data-msg="I want a platformer">🎮 Platformer</button>
+        <button class="quick-btn" data-msg="I want a top-down adventure">🗺️ Top-Down</button>
+        <button class="quick-btn" data-msg="I want a space shooter">🚀 Shooter</button>
+        <button class="quick-btn" data-msg="I want a puzzle game">🧩 Puzzle</button>
+        <button class="quick-btn" data-msg="I want a visual novel">📖 Story</button>
+        <button class="quick-btn" data-msg="I want a racing game">🏎️ Racing</button>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-area">
+        <div class="input-wrapper">
+          <textarea
+            class="chat-input"
+            id="chatInput"
+            placeholder="Describe your dream game…"
+            rows="1"
+          ></textarea>
+          <button class="send-btn" id="sendBtn" title="Send">&#x27A4;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Side panel -->
+    <aside class="side-panel" id="sidePanel">
+      <div class="panel-header">⚙ Game Specification</div>
+      <div class="panel-content" id="specPanel">
+        <div class="spec-card">
+          <p style="color:var(--text-muted);font-size:13px;">
+            Start a conversation to see your game spec here.
+          </p>
+        </div>
+      </div>
+
+      <div class="download-area" id="downloadArea">
+        <button class="download-btn" id="downloadBtn">
+          ⬇ Download Godot Project
+        </button>
+        <div class="validation-log" id="validationLog"></div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
