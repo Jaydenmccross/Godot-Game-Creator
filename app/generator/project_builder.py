@@ -15,6 +15,7 @@ from app.generator.templates.shooter import ShooterTemplate
 from app.generator.templates.puzzle import PuzzleTemplate
 from app.generator.templates.visual_novel import VisualNovelTemplate
 from app.generator.templates.racing import RacingTemplate
+from app.art.art_generator import GameArtGenerator
 
 _TEMPLATE_MAP = {
     Genre.PLATFORMER: PlatformerTemplate,
@@ -38,8 +39,25 @@ async def generate_game(spec: GameSpec) -> dict:
 
     write_project_file(project_dir, spec)
 
+    # Try AI art generation (Pollinations.ai — free, no key)
+    art_gen = GameArtGenerator(
+        project_dir / "assets",
+        theme=spec.theme,
+        art_style=spec.art_style,
+        genre=spec.genre.value,
+    )
+    art_results = {}
+    try:
+        art_results = await art_gen.generate_all(spec)
+        art_count = sum(1 for v in art_results.values() if v)
+        print(f"[art] Generated {art_count}/{len(art_results)} AI art assets")
+    except Exception as e:
+        print(f"[art] AI art generation failed ({e}), using procedural fallback")
+
     template_cls = _TEMPLATE_MAP.get(spec.genre, PlatformerTemplate)
     template = template_cls(spec, project_dir)
+    template.has_ai_art = any(art_results.values())
+    template.art_results = art_results
     template.generate()
 
     generate_installers(project_dir, spec)
@@ -48,4 +66,5 @@ async def generate_game(spec: GameSpec) -> dict:
         "project_dir": str(project_dir),
         "name": spec.name,
         "genre": spec.genre.value,
+        "ai_art_count": sum(1 for v in art_results.values() if v),
     }

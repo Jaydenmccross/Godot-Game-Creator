@@ -408,8 +408,9 @@ func _place_exit(b: Dictionary) -> void:
 # ── player spawn ───────────────────────────────────────────────────
 func _spawn_player() -> void:
 \tvar player := preload("res://scenes/player.tscn").instantiate()
-\tvar sx: float = T * 5.0
-\tplayer.position = Vector2(sx, _surface_y(sx) - 30)
+\t# Spawn well inside the terrain to avoid left-edge gap
+\tvar sx: float = T * 12.0
+\tplayer.position = Vector2(sx, _surface_y(sx) - 40)
 \tadd_child(player)
 
 
@@ -655,14 +656,21 @@ func take_damage(amount: int, knockback_dir: Vector2 = Vector2.ZERO) -> void:
 \tstate = State.HURT
 \t_hurt_timer = HURT_DURATION
 \t_invincible = true
-\tvelocity = knockback_dir.normalized() * 200 + Vector2(0, -150)
-\tScreenEffects.shake(6.0, 0.2)
-\tScreenEffects.flash(Color(1, 0.2, 0.2, 0.3), 0.15)
-\t# blink during invincibility
-\tvar tween := create_tween()
-\tfor i in 5:
-\t\ttween.tween_property(self, "modulate:a", 0.3, 0.07)
-\t\ttween.tween_property(self, "modulate:a", 1.0, 0.07)
+\tvelocity = knockback_dir.normalized() * 150 + Vector2(0, -120)
+\tScreenEffects.shake(4.0, 0.15)
+\t# Invincibility blink using a simple timer, not tween
+\t_start_invincibility_blink()
+
+
+func _start_invincibility_blink() -> void:
+\tvar blink_count := 0
+\twhile blink_count < 6 and _invincible:
+\t\tmodulate.a = 0.3
+\t\tawait get_tree().create_timer(0.1).timeout
+\t\tmodulate.a = 1.0
+\t\tawait get_tree().create_timer(0.1).timeout
+\t\tblink_count += 1
+\tmodulate.a = 1.0
 
 
 func _update_facing(dir: float) -> void:
@@ -1040,8 +1048,9 @@ func _ready() -> void:
 
 
 func _process(_d: float) -> void:
-\tposition.y = _base_y + sin(Time.get_ticks_msec() / 1000.0 * 3.0) * 5.0
-\trotation = sin(Time.get_ticks_msec() / 1000.0 * 2.0) * 0.2
+\tvar t: float = Time.get_ticks_msec() / 1000.0
+\tposition.y = _base_y + sin(t * 1.5) * 4.0
+\trotation = sin(t * 1.0) * 0.15
 
 
 func _on_pickup(body: Node2D) -> void:

@@ -17,6 +17,8 @@ class BaseTemplate(ABC):
     def __init__(self, spec: GameSpec, project_dir: Path) -> None:
         self.spec = spec
         self.dir = project_dir
+        self.has_ai_art: bool = False
+        self.art_results: dict = {}
 
     # ── public entry point ──────────────────────────────────────────────
 
@@ -143,12 +145,12 @@ func restart_level() -> void:
 
     def _write_sprite_generator(self) -> None:
         self._write("scripts/autoload/sprite_generator.gd", '''extends Node
-## Procedurally generates multi-directional animated sprites at runtime.
-## Creates proper animation frames for idle, run, jump, fall, attack
-## in all relevant directions so characters look natural.
+## Generates character sprite animations.
+## If AI-generated art exists in assets/, loads those PNGs.
+## Otherwise creates basic colored shape sprites as fallback.
 
-const FRAME_SIZE := Vector2i(32, 48)
-const TOPDOWN_SIZE := Vector2i(32, 32)
+const FRAME_SIZE := Vector2i(48, 64)
+const TOPDOWN_SIZE := Vector2i(48, 48)
 
 
 func create_platformer_frames(body_color: Color, detail_color: Color) -> SpriteFrames:
@@ -157,16 +159,16 @@ func create_platformer_frames(body_color: Color, detail_color: Color) -> SpriteF
 \tsf.remove_animation("default")
 
 \tvar anims := {
-\t\t"idle_right": {&"frames": 4, &"speed": 4.0, &"loop": true},
-\t\t"idle_left": {&"frames": 4, &"speed": 4.0, &"loop": true},
-\t\t"run_right": {&"frames": 6, &"speed": 10.0, &"loop": true},
-\t\t"run_left": {&"frames": 6, &"speed": 10.0, &"loop": true},
-\t\t"jump_right": {&"frames": 2, &"speed": 4.0, &"loop": false},
-\t\t"jump_left": {&"frames": 2, &"speed": 4.0, &"loop": false},
-\t\t"fall_right": {&"frames": 2, &"speed": 4.0, &"loop": false},
-\t\t"fall_left": {&"frames": 2, &"speed": 4.0, &"loop": false},
-\t\t"attack_right": {&"frames": 3, &"speed": 12.0, &"loop": false},
-\t\t"attack_left": {&"frames": 3, &"speed": 12.0, &"loop": false},
+\t\t"idle_right": {&"frames": 2, &"speed": 2.0, &"loop": true},
+\t\t"idle_left": {&"frames": 2, &"speed": 2.0, &"loop": true},
+\t\t"run_right": {&"frames": 4, &"speed": 6.0, &"loop": true},
+\t\t"run_left": {&"frames": 4, &"speed": 6.0, &"loop": true},
+\t\t"jump_right": {&"frames": 1, &"speed": 1.0, &"loop": false},
+\t\t"jump_left": {&"frames": 1, &"speed": 1.0, &"loop": false},
+\t\t"fall_right": {&"frames": 1, &"speed": 1.0, &"loop": false},
+\t\t"fall_left": {&"frames": 1, &"speed": 1.0, &"loop": false},
+\t\t"attack_right": {&"frames": 2, &"speed": 6.0, &"loop": false},
+\t\t"attack_left": {&"frames": 2, &"speed": 6.0, &"loop": false},
 \t}
 
 \tfor anim_name in anims:
@@ -194,8 +196,8 @@ func create_topdown_frames(body_color: Color, detail_color: Color) -> SpriteFram
 \t\tfor dir in dirs:
 \t\t\tvar anim_name: String = action + "_" + dir
 \t\t\tsf.add_animation(anim_name)
-\t\t\tvar frame_count: int = 4 if action == "walk" else (3 if action == "attack" else 2)
-\t\t\tvar speed: float = 8.0 if action == "walk" else (12.0 if action == "attack" else 3.0)
+\t\t\tvar frame_count: int = 3 if action == "walk" else (2 if action == "attack" else 1)
+\t\t\tvar speed: float = 5.0 if action == "walk" else (6.0 if action == "attack" else 1.0)
 \t\t\tsf.set_animation_speed(anim_name, speed)
 \t\t\tsf.set_animation_loop(anim_name, action != "attack")
 \t\t\tfor i in frame_count:
