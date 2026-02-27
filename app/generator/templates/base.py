@@ -192,10 +192,10 @@ func create_topdown_frames(body_color: Color, detail_color: Color) -> SpriteFram
 \tvar actions := ["idle", "walk", "attack"]
 \tfor action in actions:
 \t\tfor dir in dirs:
-\t\t\tvar anim_name := action + "_" + dir
+\t\t\tvar anim_name: String = action + "_" + dir
 \t\t\tsf.add_animation(anim_name)
-\t\t\tvar frame_count := 4 if action == "walk" else (3 if action == "attack" else 2)
-\t\t\tvar speed := 8.0 if action == "walk" else (12.0 if action == "attack" else 3.0)
+\t\t\tvar frame_count: int = 4 if action == "walk" else (3 if action == "attack" else 2)
+\t\t\tvar speed: float = 8.0 if action == "walk" else (12.0 if action == "attack" else 3.0)
 \t\t\tsf.set_animation_speed(anim_name, speed)
 \t\t\tsf.set_animation_loop(anim_name, action != "attack")
 \t\t\tfor i in frame_count:
@@ -214,7 +214,7 @@ func _draw_platformer_frame(img: Image, body: Color, detail: Color, anim: String
 \t\tfor x in range(cx - 6, cx + 6):
 \t\t\timg.set_pixel(x, y, body)
 \t# Eyes
-\tvar eye_x := cx + 2 if not flip else cx - 4
+\tvar eye_x: int = cx + 2 if not flip else cx - 4
 \timg.set_pixel(eye_x, 8, Color.WHITE)
 \timg.set_pixel(eye_x + 1, 8, Color.WHITE)
 \t# Body
@@ -241,7 +241,7 @@ func _draw_platformer_frame(img: Image, body: Color, detail: Color, anim: String
 
 
 func _draw_legs_standing(img: Image, cx: int, y: int, color: Color, frame: int) -> void:
-\tvar spread := 1 if frame % 2 == 0 else 2
+\tvar spread: int = 1 if frame % 2 == 0 else 2
 \tfor ly in range(y, y + 12):
 \t\timg.set_pixel(cx - 3 - spread, ly, color)
 \t\timg.set_pixel(cx - 2 - spread, ly, color)
@@ -265,7 +265,7 @@ func _draw_legs_running(img: Image, cx: int, y: int, color: Color, frame: int, _
 
 
 func _draw_legs_jump(img: Image, cx: int, y: int, color: Color, frame: int) -> void:
-\tvar tuck := 2 if frame == 0 else 0
+\tvar tuck: int = 2 if frame == 0 else 0
 \tfor ly in range(y, y + 10 - tuck):
 \t\timg.set_pixel(cx - 4, ly, color)
 \t\timg.set_pixel(cx - 3, ly, color)
@@ -287,9 +287,11 @@ func _draw_legs_fall(img: Image, cx: int, y: int, color: Color, frame: int) -> v
 
 
 func _draw_attack_arm(img: Image, cx: int, y: int, color: Color, frame: int, flip: bool) -> void:
-\tvar arm_len := [4, 10, 7][frame]
-\tvar arm_y := y + [-2, -4, 0][frame]
-\tvar dir_x := 1 if not flip else -1
+\tvar arm_lengths: Array[int] = [4, 10, 7]
+\tvar arm_offsets: Array[int] = [-2, -4, 0]
+\tvar arm_len: int = arm_lengths[frame]
+\tvar arm_y: int = y + arm_offsets[frame]
+\tvar dir_x: int = 1 if not flip else -1
 \tfor i in range(arm_len):
 \t\tvar px := cx + 5 * dir_x + i * dir_x
 \t\tif px >= 0 and px < img.get_width() and arm_y >= 0 and arm_y < img.get_height():

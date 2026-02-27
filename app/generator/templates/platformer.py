@@ -1128,46 +1128,41 @@ shape = SubResource("gcol")
 
     def _write_screen_effects(self) -> None:
         self._write("scripts/autoload/screen_effects.gd", '''extends CanvasLayer
-## Screen effects — shake, flash, freeze-frame.
+## Screen effects — shake, flash. Access via the ScreenEffects autoload singleton.
 
 var _shake_strength := 0.0
 var _shake_decay := 0.0
-var _flash_rect: ColorRect = null
+var _flash_rect: ColorRect
 
 
 func _ready() -> void:
 \t_flash_rect = ColorRect.new()
 \t_flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-\t_flash_rect.anchors_preset = Control.PRESET_FULL_RECT
+\t_flash_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 \t_flash_rect.color = Color.TRANSPARENT
 \tadd_child(_flash_rect)
 
 
 func _process(delta: float) -> void:
+\tvar cam = get_viewport().get_camera_2d()
 \tif _shake_strength > 0.01:
 \t\t_shake_strength = lerp(_shake_strength, 0.0, _shake_decay * delta * 60.0)
-\t\tvar cam := get_viewport().get_camera_2d()
 \t\tif cam:
 \t\t\tcam.offset = Vector2(randf_range(-1, 1), randf_range(-1, 1)) * _shake_strength
 \telse:
-\t\tvar cam := get_viewport().get_camera_2d()
 \t\tif cam:
 \t\t\tcam.offset = cam.offset.lerp(Vector2.ZERO, delta * 10.0)
 
 
-static func shake(strength: float, duration: float) -> void:
-\tvar inst := Engine.get_singleton("ScreenEffects") if Engine.has_singleton("ScreenEffects") else null
-\tif inst:
-\t\tinst._shake_strength = strength
-\t\tinst._shake_decay = 1.0 / max(duration, 0.01)
+func shake(strength: float, duration: float) -> void:
+\t_shake_strength = strength
+\t_shake_decay = 1.0 / max(duration, 0.01)
 
 
-static func flash(color: Color, duration: float) -> void:
-\tvar inst := Engine.get_singleton("ScreenEffects") if Engine.has_singleton("ScreenEffects") else null
-\tif inst and inst._flash_rect:
-\t\tinst._flash_rect.color = color
-\t\tvar tw := inst.create_tween()
-\t\ttw.tween_property(inst._flash_rect, "color:a", 0.0, duration)
+func flash(color: Color, duration: float) -> void:
+\t_flash_rect.color = color
+\tvar tween = create_tween()
+\ttween.tween_property(_flash_rect, "color:a", 0.0, duration)
 ''')
 
     # ═══════════════════════════════════════════════════════════════════
