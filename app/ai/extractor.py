@@ -139,14 +139,14 @@ def _extract_theme(low: str) -> str | None:
 
 
 def _extract_name(text: str) -> str | None:
-    m = re.search(r'(?:call(?:ed)?|named?|title[d]?)\s+["\']([^"\']{1,40})["\']', text, re.IGNORECASE)
+    m = re.search(r'(?:call\s+it|called|named?|title[d]?)\s+"([^"]{1,40})"', text, re.IGNORECASE)
     if m:
         return m.group(1).strip()
-    m = re.search(r'["\']([A-Z][\w\s]{1,30})["\']', text)
+    m = re.search(r'"([A-Za-z][\w\s\']{1,30})"', text)
     if m:
         return m.group(1).strip()
     m = re.search(
-        r'(?:call(?:ed)?|named?|title[d]?)\s+([A-Z][\w]{0,15}(?:\s+[A-Z][\w]{0,15}){0,3})',
+        r"(?:call\s+it|called|named?|title[d]?)\s+([A-Z][\w']{0,15}(?:\s+[A-Z][\w']{0,15}){0,3})",
         text,
     )
     if m:

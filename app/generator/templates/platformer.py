@@ -311,7 +311,7 @@ func _ready() -> void:
 \tbody_entered.connect(_on_body_entered)
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 \tposition.y = _base_y + sin(Time.get_ticks_msec() / 1000.0 * BOB_SPEED) * BOB_HEIGHT
 
 

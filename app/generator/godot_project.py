@@ -15,7 +15,7 @@ config_version=5
 [application]
 
 config/name="{spec.name}"
-config/description="{spec.description or f'A {spec.theme} {spec.genre.value} game'}"
+config/description="{(spec.description or f'A {spec.theme} {spec.genre.value} game').replace(chr(34), '')}"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.4")
 
