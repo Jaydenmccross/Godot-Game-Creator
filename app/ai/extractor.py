@@ -109,6 +109,57 @@ def extract_game_params(text: str) -> dict:
     if re.search(r"\b(?:dialog|dialogue|story|narrative|npc|talk|quest)\b", low):
         params["has_dialogue"] = True
 
+    if re.search(r"\b(?:particle|sparkle|trail|dust|ember|glow|smoke)\b", low):
+        params["has_particles"] = True
+    if re.search(r"\b(?:parallax|layered\s*back|scrolling\s*back)\b", low):
+        params["has_parallax_bg"] = True
+
+    particle_map = {
+        "fire": "fire", "flame": "fire", "ember": "fire",
+        "sparkle": "sparkle", "glitter": "sparkle", "shimmer": "sparkle",
+        "rain": "rain", "raindrop": "rain",
+        "snow": "snow", "snowflake": "snow",
+        "dust": "dust", "sand": "dust",
+        "smoke": "smoke", "fog": "smoke", "mist": "smoke",
+        "star": "stars", "twinkle": "stars",
+        "leaf": "leaves", "leaves": "leaves", "petal": "leaves",
+        "bubble": "bubbles",
+    }
+    for kw, ptype in particle_map.items():
+        if re.search(rf"\b{kw}\b", low):
+            params["particle_type"] = ptype
+            params["has_particles"] = True
+            break
+
+    weather_map = {
+        "rain": "rain", "rainy": "rain", "storm": "rain",
+        "snow": "snow", "snowy": "snow", "blizzard": "snow",
+        "fog": "fog", "foggy": "fog", "misty": "fog",
+        "wind": "wind", "windy": "wind",
+    }
+    for kw, wtype in weather_map.items():
+        if re.search(rf"\b{kw}\s*(?:weather|effect)?\b", low):
+            params["weather"] = wtype
+            break
+
+    color_map = {
+        r"\b(?:red|crimson|scarlet)\b": ("#e74c3c", None),
+        r"\b(?:blue|azure|cobalt)\b": ("#3498db", None),
+        r"\b(?:green|emerald|lime)\b": ("#2ecc71", None),
+        r"\b(?:purple|violet|lavender)\b": ("#9b59b6", None),
+        r"\b(?:orange|amber|tangerine)\b": ("#e67e22", None),
+        r"\b(?:pink|magenta|fuchsia)\b": ("#e84393", None),
+        r"\b(?:cyan|teal|turquoise)\b": ("#00cec9", None),
+        r"\b(?:gold|golden|yellow)\b": ("#f1c40f", None),
+    }
+    for pattern, (color, _) in color_map.items():
+        if re.search(pattern, low) and re.search(r"\b(?:player|hero|character|primary)\b", low):
+            params["color_primary"] = color
+        elif re.search(pattern, low) and re.search(r"\b(?:enemy|foe|opponent|secondary)\b", low):
+            params["color_secondary"] = color
+        elif re.search(pattern, low) and re.search(r"\b(?:background|bg|backdrop)\b", low):
+            params["color_bg"] = color
+
     for kw, diff in _DIFFICULTY_MAP.items():
         if re.search(rf"\b{kw}\b", low):
             params["difficulty"] = diff

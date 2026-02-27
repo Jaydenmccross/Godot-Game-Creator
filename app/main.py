@@ -14,10 +14,11 @@ from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import GENERATED_GAMES_DIR, STATIC_DIR
-from app.models import ChatRequest, ChatResponse
-from app.ai.engine import process_message
+from app.models import ChatRequest, ChatResponse, UndoRequest
+from app.ai.engine import process_message, process_undo, get_or_create_session
+from app.ai.suggestions import get_help_text
 
-app = FastAPI(title="Godot Game Creator", version="1.0.0")
+app = FastAPI(title="Godot Game Creator", version="2.0.0")
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
@@ -30,6 +31,17 @@ async def index():
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(req: ChatRequest):
     return await process_message(req)
+
+
+@app.post("/api/undo", response_model=ChatResponse)
+async def undo(req: UndoRequest):
+    return await process_undo(req)
+
+
+@app.get("/api/help/{session_id}")
+async def help_text(session_id: str):
+    session = get_or_create_session(session_id)
+    return {"help": get_help_text(session.state, session.spec)}
 
 
 @app.get("/api/download/{game_name}")

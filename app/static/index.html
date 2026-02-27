@@ -19,6 +19,8 @@
       <p>AI-powered game studio — zero scripting required</p>
     </div>
     <div class="header-actions">
+      <button class="btn-icon" id="undoBtn" title="Undo last change" disabled>&#x21A9;</button>
+      <button class="btn-icon" id="helpBtn" title="Help & tips">?</button>
       <button class="btn-icon" id="newChat" title="New conversation">&#x21bb;</button>
       <button class="btn-icon" id="togglePanel" title="Toggle panel">&#x2630;</button>
     </div>
@@ -26,6 +28,39 @@
 
   <!-- Progress bar -->
   <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Help Overlay -->
+  <div class="help-overlay" id="helpOverlay">
+    <div class="help-card">
+      <div class="help-header">
+        <span>Help & Tips</span>
+        <button class="btn-icon" id="helpClose">&times;</button>
+      </div>
+      <div class="help-body" id="helpBody">
+        <h3>Getting Started</h3>
+        <p>Describe your dream game in detail. The more you share, the richer the result!</p>
+        <h3>Visual Elements You Can Request</h3>
+        <ul>
+          <li><strong>Sprites:</strong> player colors, enemy appearance, character styles</li>
+          <li><strong>Backgrounds:</strong> parallax scrolling, gradient skies, themed backdrops</li>
+          <li><strong>Terrain:</strong> platforms, grass, water, lava, roads, dungeon floors</li>
+          <li><strong>Particles:</strong> fire, sparkles, rain, snow, dust, smoke, bubbles, leaves</li>
+          <li><strong>Weather:</strong> rain, snow, fog, wind effects</li>
+          <li><strong>Colors:</strong> custom palettes for player, enemies, background</li>
+          <li><strong>Effects:</strong> glow, neon, screen shake, trails</li>
+        </ul>
+        <h3>Example Requests</h3>
+        <ul>
+          <li><em>"A cyberpunk platformer with neon pink player, rain particles, and parallax city background"</em></li>
+          <li><em>"Make the enemies red with fire trail effects"</em></li>
+          <li><em>"Add snow weather and a purple background"</em></li>
+          <li><em>"I want sparkle effects on the collectibles"</em></li>
+        </ul>
+        <h3>Undo</h3>
+        <p>Click the ↩ button to revert your last change. You can undo multiple times.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- Main -->
   <div class="main-layout">
@@ -40,8 +75,11 @@
         <span class="typing-text">Game Creator is thinking…</span>
       </div>
 
+      <!-- Smart suggestions -->
+      <div class="suggestions-bar" id="suggestionsBar"></div>
+
       <!-- Quick actions -->
-      <div class="quick-actions">
+      <div class="quick-actions" id="quickActions">
         <button class="quick-btn" data-msg="I want a platformer">🎮 Platformer</button>
         <button class="quick-btn" data-msg="I want a top-down adventure">🗺️ Top-Down</button>
         <button class="quick-btn" data-msg="I want a space shooter">🚀 Shooter</button>
@@ -56,7 +94,7 @@
           <textarea
             class="chat-input"
             id="chatInput"
-            placeholder="Describe your dream game…"
+            placeholder="Describe your dream game… (try mentioning visuals, effects, and colors!)"
             rows="1"
           ></textarea>
           <button class="send-btn" id="sendBtn" title="Send">&#x27A4;</button>
@@ -66,13 +104,30 @@
 
     <!-- Side panel -->
     <aside class="side-panel" id="sidePanel">
-      <div class="panel-header">⚙ Game Specification</div>
-      <div class="panel-content" id="specPanel">
-        <div class="spec-card">
-          <p style="color:var(--text-muted);font-size:13px;">
-            Start a conversation to see your game spec here.
-          </p>
+      <!-- Preview -->
+      <div class="panel-section">
+        <div class="panel-header">🎬 Live Preview</div>
+        <div class="preview-wrapper">
+          <canvas id="previewCanvas" width="320" height="240"></canvas>
         </div>
+      </div>
+
+      <!-- Spec -->
+      <div class="panel-section">
+        <div class="panel-header">⚙ Game Specification</div>
+        <div class="panel-content" id="specPanel">
+          <div class="spec-card">
+            <p style="color:var(--text-muted);font-size:13px;">
+              Start a conversation to see your game spec and live preview here.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Color palette -->
+      <div class="panel-section" id="paletteSection" style="display:none;">
+        <div class="panel-header">🎨 Color Palette</div>
+        <div class="palette-row" id="paletteRow"></div>
       </div>
 
       <div class="download-area" id="downloadArea">
@@ -85,6 +140,7 @@
 
   </div>
 
+  <script src="/static/js/preview.js"></script>
   <script src="/static/js/app.js"></script>
 </body>
 </html>
