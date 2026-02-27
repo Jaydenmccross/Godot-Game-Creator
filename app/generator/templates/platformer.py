@@ -128,8 +128,8 @@ func _compute_heights(b: Dictionary) -> void:
 \t_heights.clear()
 \tfor x in world_width:
 \t\tvar base := 0.6 * world_height * T
-\t\tvar hill := _noise.get_noise_1d(float(x)) * 5.0 * T
-\t\tvar detail := _detail_noise.get_noise_1d(float(x)) * 2.0 * T
+\t\tvar hill: float = _noise.get_noise_1d(float(x)) * 5.0 * T
+\t\tvar detail: float = _detail_noise.get_noise_1d(float(x)) * 2.0 * T
 \t\t_heights.append(base + hill + detail)
 
 
@@ -252,8 +252,8 @@ func _place_platforms(b: Dictionary) -> void:
 \t\tvpts.append(Vector2(-half, 0))
 \t\tvpts.append(Vector2(-half + 2, 6))
 \t\tfor s in range(8):
-\t\t\tvar sx := lerp(-half + 2, half - 2, float(s) / 7.0)
-\t\t\tvar wobble := plat_noise.get_noise_1d(px + s * 20) * 3.0
+\t\t\tvar sx: float = lerp(-half + 2, half - 2, float(s) / 7.0)
+\t\t\tvar wobble: float = plat_noise.get_noise_1d(px + s * 20) * 3.0
 \t\t\tvpts.append(Vector2(sx, 8 + wobble))
 \t\tvpts.append(Vector2(half - 2, 6))
 \t\tvpts.append(Vector2(half, 0))
@@ -281,7 +281,7 @@ func _place_decorations(b: Dictionary) -> void:
 \tfor x_tile in range(2, world_width - 2):
 \t\tvar wx := float(x_tile) * T
 \t\tvar sy := _surface_y(wx)
-\t\tvar r := _detail_noise.get_noise_2d(float(x_tile), 0.0)
+\t\tvar r: float = _detail_noise.get_noise_2d(float(x_tile), 0.0)
 
 \t\t# Trees
 \t\tif r > 0.25 and x_tile % 3 == 0:
@@ -408,7 +408,7 @@ func _place_exit(b: Dictionary) -> void:
 # ── player spawn ───────────────────────────────────────────────────
 func _spawn_player() -> void:
 \tvar player := preload("res://scenes/player.tscn").instantiate()
-\tvar sx := T * 5.0
+\tvar sx: float = T * 5.0
 \tplayer.position = Vector2(sx, _surface_y(sx) - 30)
 \tadd_child(player)
 
@@ -767,7 +767,7 @@ func _physics_process(delta: float) -> void:
 \tfor i in get_slide_collision_count():
 \t\tvar col := get_slide_collision(i)
 \t\tif col.get_collider().has_method("take_damage"):
-\t\t\tvar kb := (col.get_collider().global_position - global_position).normalized()
+\t\t\tvar kb: Vector2 = (col.get_collider().global_position - global_position).normalized()
 \t\t\tcol.get_collider().take_damage(DAMAGE, kb)
 
 
@@ -864,7 +864,7 @@ func _physics_process(delta: float) -> void:
 \t\tvelocity = bob
 \t\t# dive at player if close
 \t\tif player and global_position.distance_to(player.global_position) < DETECT_RANGE:
-\t\t\tvar dir := global_position.direction_to(player.global_position)
+\t\t\tvar dir: Vector2 = global_position.direction_to(player.global_position)
 \t\t\tvelocity = dir * DIVE_SPEED
 \t\t\t_diving = true
 \t\t\t_time = 0.0
@@ -875,7 +875,7 @@ func _physics_process(delta: float) -> void:
 \tfor i in get_slide_collision_count():
 \t\tvar col := get_slide_collision(i)
 \t\tif col.get_collider().has_method("take_damage"):
-\t\t\tvar kb := (col.get_collider().global_position - global_position).normalized()
+\t\t\tvar kb: Vector2 = (col.get_collider().global_position - global_position).normalized()
 \t\t\tcol.get_collider().take_damage(DAMAGE, kb)
 
 
