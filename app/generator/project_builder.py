@@ -8,6 +8,7 @@ from pathlib import Path
 from app.config import GENERATED_GAMES_DIR
 from app.models import GameSpec, Genre
 from app.generator.godot_project import write_project_file
+from app.generator.installer_builder import generate_installers
 from app.generator.templates.platformer import PlatformerTemplate
 from app.generator.templates.topdown import TopdownTemplate
 from app.generator.templates.shooter import ShooterTemplate
@@ -40,6 +41,8 @@ async def generate_game(spec: GameSpec) -> dict:
     template_cls = _TEMPLATE_MAP.get(spec.genre, PlatformerTemplate)
     template = template_cls(spec, project_dir)
     template.generate()
+
+    generate_installers(project_dir, spec)
 
     return {
         "project_dir": str(project_dir),
