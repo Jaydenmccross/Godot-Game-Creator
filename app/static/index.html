@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Godot Game Creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-logo">G</div>
+    <div class="header-text">
+      <h1>Godot Game Creator</h1>
+      <p>AI-powered game studio — zero scripting required</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" id="undoBtn" title="Undo last change" disabled>&#x21A9;</button>
+      <button class="btn-icon" id="helpBtn" title="Help & tips">?</button>
+      <button class="btn-icon" id="newChat" title="New conversation">&#x21bb;</button>
+      <button class="btn-icon" id="togglePanel" title="Toggle panel">&#x2630;</button>
+    </div>
+  </header>
+
+  <!-- Progress bar -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Help Overlay -->
+  <div class="help-overlay" id="helpOverlay">
+    <div class="help-card">
+      <div class="help-header">
+        <span>Help & Tips</span>
+        <button class="btn-icon" id="helpClose">&times;</button>
+      </div>
+      <div class="help-body" id="helpBody">
+        <h3>Getting Started</h3>
+        <p>Describe your dream game in detail. The more you share, the richer the result!</p>
+        <h3>Visual Elements You Can Request</h3>
+        <ul>
+          <li><strong>Sprites:</strong> player colors, enemy appearance, character styles</li>
+          <li><strong>Backgrounds:</strong> parallax scrolling, gradient skies, themed backdrops</li>
+          <li><strong>Terrain:</strong> platforms, grass, water, lava, roads, dungeon floors</li>
+          <li><strong>Particles:</strong> fire, sparkles, rain, snow, dust, smoke, bubbles, leaves</li>
+          <li><strong>Weather:</strong> rain, snow, fog, wind effects</li>
+          <li><strong>Colors:</strong> custom palettes for player, enemies, background</li>
+          <li><strong>Effects:</strong> glow, neon, screen shake, trails</li>
+        </ul>
+        <h3>Example Requests</h3>
+        <ul>
+          <li><em>"A cyberpunk platformer with neon pink player, rain particles, and parallax city background"</em></li>
+          <li><em>"Make the enemies red with fire trail effects"</em></li>
+          <li><em>"Add snow weather and a purple background"</em></li>
+          <li><em>"I want sparkle effects on the collectibles"</em></li>
+        </ul>
+        <h3>Undo</h3>
+        <p>Click the ↩ button to revert your last change. You can undo multiple times.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main-layout">
+
+    <!-- Chat panel -->
+    <section class="chat-panel">
+      <div class="chat-messages" id="chatMessages"></div>
+
+      <!-- Typing indicator -->
+      <div class="typing-indicator" id="typingIndicator">
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+        <span class="typing-text">Game Creator is thinking…</span>
+      </div>
+
+      <!-- Smart suggestions -->
+      <div class="suggestions-bar" id="suggestionsBar"></div>
+
+      <!-- Quick actions -->
+      <div class="quick-actions" id="quickActions">
+        <button class="quick-btn" data-msg="I want a 2D platformer">🎮 Platformer</button>
+        <button class="quick-btn" data-msg="I want a top-down adventure">🗺️ Top-Down</button>
+        <button class="quick-btn" data-msg="I want a space shooter">🚀 Shooter</button>
+        <button class="quick-btn" data-msg="I want a puzzle game">🧩 Puzzle</button>
+        <button class="quick-btn" data-msg="I want a visual novel">📖 Story</button>
+        <button class="quick-btn" data-msg="I want a racing game">🏎️ Racing</button>
+      </div>
+
+      <!-- Game options bar -->
+      <div class="options-bar" id="optionsBar">
+        <div class="option-group">
+          <label>Dimension</label>
+          <select id="optDimension">
+            <option value="2d" selected>2D</option>
+            <option value="3d">3D</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label>Input</label>
+          <select id="optInput">
+            <option value="both" selected>Keyboard + Controller</option>
+            <option value="keyboard">Keyboard Only</option>
+            <option value="controller">Controller Only</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label>Multiplayer</label>
+          <select id="optMultiplayer">
+            <option value="none" selected>Single Player</option>
+            <option value="local">Local Co-op</option>
+            <option value="online_ip">Online (Direct IP)</option>
+            <option value="online_lobby">Online (Lobby)</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label>Levels</label>
+          <input type="number" id="optLevels" value="3" min="1" max="10" style="width:50px">
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-area">
+        <div class="input-wrapper">
+          <textarea
+            class="chat-input"
+            id="chatInput"
+            placeholder="Describe your dream game… (try mentioning visuals, effects, and colors!)"
+            rows="1"
+          ></textarea>
+          <button class="send-btn" id="sendBtn" title="Send">&#x27A4;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Side panel -->
+    <aside class="side-panel" id="sidePanel">
+      <!-- Preview -->
+      <div class="panel-section">
+        <div class="panel-header">🎬 Live Preview</div>
+        <div class="preview-wrapper">
+          <canvas id="previewCanvas" width="320" height="240"></canvas>
+        </div>
+      </div>
+
+      <!-- Spec -->
+      <div class="panel-section">
+        <div class="panel-header">⚙ Game Specification</div>
+        <div class="panel-content" id="specPanel">
+          <div class="spec-card">
+            <p style="color:var(--text-muted);font-size:13px;">
+              Start a conversation to see your game spec and live preview here.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Color palette -->
+      <div class="panel-section" id="paletteSection" style="display:none;">
+        <div class="panel-header">🎨 Color Palette</div>
+        <div class="palette-row" id="paletteRow"></div>
+      </div>
+
+      <div class="download-area" id="downloadArea">
+        <button class="download-btn" id="downloadBtn">
+          ⬇ Download Godot Project
+        </button>
+        <div class="validation-log" id="validationLog"></div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script src="/static/js/preview.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

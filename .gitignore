@@ -1,0 +1,15 @@
+# Godot 4+ auto-generated cache
+.godot/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.mypy_cache/
+
+# Generated games output (created at runtime)
+generated_games/
+
+# OS-specific
+.DS_Store
+Thumbs.db
