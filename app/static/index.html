@@ -80,12 +80,44 @@
 
       <!-- Quick actions -->
       <div class="quick-actions" id="quickActions">
-        <button class="quick-btn" data-msg="I want a platformer">🎮 Platformer</button>
+        <button class="quick-btn" data-msg="I want a 2D platformer">🎮 Platformer</button>
         <button class="quick-btn" data-msg="I want a top-down adventure">🗺️ Top-Down</button>
         <button class="quick-btn" data-msg="I want a space shooter">🚀 Shooter</button>
         <button class="quick-btn" data-msg="I want a puzzle game">🧩 Puzzle</button>
         <button class="quick-btn" data-msg="I want a visual novel">📖 Story</button>
         <button class="quick-btn" data-msg="I want a racing game">🏎️ Racing</button>
+      </div>
+
+      <!-- Game options bar -->
+      <div class="options-bar" id="optionsBar">
+        <div class="option-group">
+          <label>Dimension</label>
+          <select id="optDimension">
+            <option value="2d" selected>2D</option>
+            <option value="3d">3D</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label>Input</label>
+          <select id="optInput">
+            <option value="both" selected>Keyboard + Controller</option>
+            <option value="keyboard">Keyboard Only</option>
+            <option value="controller">Controller Only</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label>Multiplayer</label>
+          <select id="optMultiplayer">
+            <option value="none" selected>Single Player</option>
+            <option value="local">Local Co-op</option>
+            <option value="online_ip">Online (Direct IP)</option>
+            <option value="online_lobby">Online (Lobby)</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label>Levels</label>
+          <input type="number" id="optLevels" value="3" min="1" max="10" style="width:50px">
+        </div>
       </div>
 
       <!-- Input -->

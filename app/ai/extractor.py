@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from app.models import Genre
+from app.models import Dimension, Genre, InputMethod, MultiplayerMode
 
 _GENRE_MAP: dict[str, Genre] = {
     "platformer": Genre.PLATFORMER,
@@ -80,6 +80,34 @@ def extract_game_params(text: str) -> dict:
     genre = _extract_genre(low)
     if genre is not None:
         params["genre"] = genre
+
+    if re.search(r"\b3[dD]\b", text):
+        params["dimension"] = Dimension.D3
+    elif re.search(r"\b2[dD]\b", text):
+        params["dimension"] = Dimension.D2
+
+    if re.search(r"\b(?:controller|xbox|gamepad|joystick)\b", low):
+        if re.search(r"\b(?:keyboard|mouse)\b", low):
+            params["input_method"] = InputMethod.BOTH
+        else:
+            params["input_method"] = InputMethod.CONTROLLER
+    elif re.search(r"\b(?:keyboard|mouse)\b", low) and re.search(r"\b(?:only|just)\b", low):
+        params["input_method"] = InputMethod.KEYBOARD
+
+    if re.search(r"\b(?:multiplayer|multi[- ]?player|online|co[- ]?op)\b", low):
+        if re.search(r"\b(?:lobby|matchmak)\b", low):
+            params["multiplayer"] = MultiplayerMode.ONLINE_LOBBY
+        elif re.search(r"\b(?:ip|direct|connect|host)\b", low):
+            params["multiplayer"] = MultiplayerMode.ONLINE_IP
+        elif re.search(r"\b(?:local|couch|split)\b", low):
+            params["multiplayer"] = MultiplayerMode.LOCAL
+        else:
+            params["multiplayer"] = MultiplayerMode.ONLINE_IP
+
+    level_match = re.search(r"(\d+)\s*(?:level|stage|room|chapter|wave|track)", low)
+    if level_match:
+        n = int(level_match.group(1))
+        params["level_count"] = max(1, min(10, n))
 
     theme = _extract_theme(low)
     if theme:

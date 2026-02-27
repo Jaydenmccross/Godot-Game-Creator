@@ -102,6 +102,20 @@ function updateSpecPanel(spec) {
   };
 
   let featRows = "";
+
+  const dimLabel = spec.dimension === "3d" ? "3D" : "2D";
+  featRows += `<div class="spec-row"><span class="label">Dimension</span><span class="value">${dimLabel}</span></div>`;
+
+  const inputLabels = { keyboard: "Keyboard", controller: "Controller", both: "Keyboard + Controller" };
+  featRows += `<div class="spec-row"><span class="label">Input</span><span class="value">${inputLabels[spec.input_method] || "Both"}</span></div>`;
+
+  const mpLabels = { none: "Single Player", local: "Local Co-op", online_ip: "Online (IP)", online_lobby: "Online (Lobby)" };
+  if (spec.multiplayer && spec.multiplayer !== "none") {
+    featRows += `<div class="spec-row"><span class="label">Multiplayer</span><span class="value" style="color:var(--accent-light)">${mpLabels[spec.multiplayer]}</span></div>`;
+  }
+
+  featRows += `<div class="spec-row"><span class="label">Levels</span><span class="value">${spec.level_count || 3}</span></div>`;
+
   const feats = [
     ["Enemies", spec.has_enemies], ["Collectibles", spec.has_collectibles],
     ["Power-ups", spec.has_powerups], ["Dialogue", spec.has_dialogue],
@@ -157,12 +171,31 @@ function renderSuggestions(suggestions) {
 }
 
 /* ── API call ──────────────────────────────────────── */
+function getOptionsPrefix() {
+  const dim = document.getElementById("optDimension")?.value;
+  const input = document.getElementById("optInput")?.value;
+  const mp = document.getElementById("optMultiplayer")?.value;
+  const levels = document.getElementById("optLevels")?.value;
+  let parts = [];
+  if (dim === "3d") parts.push("[3D]");
+  if (input === "controller") parts.push("[controller only]");
+  else if (input === "keyboard") parts.push("[keyboard only]");
+  if (mp === "local") parts.push("[local multiplayer]");
+  else if (mp === "online_ip") parts.push("[online multiplayer with direct IP]");
+  else if (mp === "online_lobby") parts.push("[online multiplayer with lobby]");
+  if (levels && levels !== "3") parts.push(`[${levels} levels]`);
+  return parts.length > 0 ? parts.join(" ") + " " : "";
+}
+
 async function sendMessage(text) {
   if (isWaiting || !text.trim()) return;
   isWaiting = true;
   sendBtn.disabled = true;
   chatInput.value = "";
   chatInput.style.height = "50px";
+
+  const prefix = getOptionsPrefix();
+  const fullText = prefix + text;
 
   addMessage("user", text);
   typingIndicator.classList.add("active");
@@ -172,7 +205,7 @@ async function sendMessage(text) {
     const res = await fetch(`${API}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: SESSION_ID, message: text }),
+      body: JSON.stringify({ session_id: SESSION_ID, message: fullText }),
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();

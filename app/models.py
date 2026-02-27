@@ -15,6 +15,24 @@ class Genre(str, Enum):
     RACING = "racing"
 
 
+class Dimension(str, Enum):
+    D2 = "2d"
+    D3 = "3d"
+
+
+class InputMethod(str, Enum):
+    KEYBOARD = "keyboard"
+    CONTROLLER = "controller"
+    BOTH = "both"
+
+
+class MultiplayerMode(str, Enum):
+    NONE = "none"
+    LOCAL = "local"
+    ONLINE_IP = "online_ip"
+    ONLINE_LOBBY = "online_lobby"
+
+
 class VisualStyle(str, Enum):
     SIMPLE = "simple"
     PIXEL = "pixel"
@@ -29,6 +47,7 @@ class GameSpec(BaseModel):
 
     name: str = "My Game"
     genre: Genre = Genre.PLATFORMER
+    dimension: Dimension = Dimension.D2
     theme: str = "fantasy"
     player_name: str = "Hero"
     has_enemies: bool = True
@@ -39,6 +58,9 @@ class GameSpec(BaseModel):
     has_parallax_bg: bool = False
     difficulty: str = "normal"
     art_style: str = "simple"
+    input_method: InputMethod = InputMethod.BOTH
+    multiplayer: MultiplayerMode = MultiplayerMode.NONE
+    level_count: int = 3
     color_primary: str = "#4a90d9"
     color_secondary: str = "#d94a4a"
     color_accent: str = "#f9ca24"
@@ -60,13 +82,11 @@ class ConversationState(str, Enum):
 
 
 class Suggestion(BaseModel):
-    """A contextual suggestion chip shown to the user."""
     text: str
     category: str = "feature"
 
 
 class StateSnapshot(BaseModel):
-    """Snapshot for undo support."""
     state: ConversationState
     spec: GameSpec
     message_count: int
