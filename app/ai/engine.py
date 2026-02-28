@@ -10,8 +10,8 @@ from __future__ import annotations
 import copy
 from typing import Optional
 
-from app.ai.intent import classify_intent, Intent
-from app.ai.extractor import extract_game_params
+from app.ai.intent import Intent
+from app.ai.llm_client import analyze_message_with_llm
 from app.ai.responses import build_response
 from app.ai.suggestions import get_suggestions
 from app.models import (
@@ -47,10 +47,17 @@ async def process_message(req: ChatRequest) -> ChatResponse:
 
     session.history.append({"role": "user", "content": user_msg})
 
-    intent = classify_intent(user_msg, session.state)
-    params = extract_game_params(user_msg)
-
-    _apply_params(session, params)
+    result = await analyze_message_with_llm(
+        user_message=user_msg,
+        current_state=session.state,
+        current_spec=session.spec,
+        history=session.history[:-1]
+    )
+    
+    intent = result.intent
+    session.spec = result.extracted_spec
+    
+    _apply_theme_colors(session.spec)
 
     if intent == Intent.START_OVER:
         session = reset_session(req.session_id)
@@ -136,14 +143,6 @@ def _save_snapshot(session: SessionData) -> None:
     if len(session.snapshots) > 20:
         session.snapshots = session.snapshots[-20:]
 
-
-def _apply_params(session: SessionData, params: dict) -> None:
-    spec = session.spec
-    for key, value in params.items():
-        if hasattr(spec, key):
-            setattr(spec, key, value)
-
-    _apply_theme_colors(spec)
 
 
 def _apply_theme_colors(spec: GameSpec) -> None:
