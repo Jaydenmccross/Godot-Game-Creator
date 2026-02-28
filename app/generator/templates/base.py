@@ -51,11 +51,19 @@ class BaseTemplate(ABC):
     # ── game manager (score, health, state) ─────────────────────────────
 
     def _write_game_manager(self) -> None:
-        self._write("scripts/autoload/game_manager.gd", '''extends Node
+        pc = self.spec.color_primary
+        sc = self.spec.color_secondary
+        bg = self.spec.color_bg
+
+        self._write("scripts/autoload/game_manager.gd", f'''extends Node
 
 signal score_changed(new_score: int)
 signal health_changed(new_health: int)
 signal game_over
+
+var color_primary := Color("{pc}")
+var color_secondary := Color("{sc}")
+var color_bg := {self._hex_to_godot_color(bg)}
 
 var score: int = 0:
 \tset(value):
